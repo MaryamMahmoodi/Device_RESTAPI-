@@ -81,8 +81,7 @@ public class DeviceController
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateDevice(@PathVariable int id, @RequestBody Device updatedDevice)
     {
-        try
-        {
+
             HashMap<String, Device> resultMap = deviceServiceImp.update(id, updatedDevice);
 
             if (resultMap.containsKey(AppResponseType.SUCCESS.name()))
@@ -101,18 +100,12 @@ public class DeviceController
             {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update operation failed");
             }
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
-        }
     }
+
 
     @PutMapping("/updatePartial/{id}")
     public ResponseEntity<?> updatePartialDevice(@PathVariable int id, @RequestBody Device partialDevice)
     {
-        try
-        {
             HashMap<String, Device> resultMap = deviceServiceImp.updatePartial(id, partialDevice);
 
             if (resultMap.containsKey(AppResponseType.SUCCESS.name()))
@@ -131,11 +124,27 @@ public class DeviceController
             {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update operation failed");
             }
-        }
-        catch (Exception e)
+
+    }
+
+    @DeleteMapping(value = "/deleteById/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable("id") int id)
+    {
+        HashMap<String, Device> result = deviceServiceImp.deleteById(id);
+
+        if (result.containsKey(AppResponseType.SUCCESS.name()))
         {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+        }
+        else if (result.containsKey(AppResponseType.NOT_FOUND.name()))
+        {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        }
+        else
+        {
+            return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 }

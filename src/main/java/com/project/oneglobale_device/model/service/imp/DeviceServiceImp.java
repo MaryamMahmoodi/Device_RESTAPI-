@@ -24,10 +24,12 @@ public class DeviceServiceImp implements DeviceServiceContract
     public HashMap<String, Object> insert(Device device)
     {
 
-        HashMap<String, Object> resultMap = deviceDaImp.insert(device);
+        HashMap<String, Object> resultMap;
 
         try
         {
+            resultMap = deviceDaImp.insert(device);
+
             if (resultMap.containsKey(AppResponseType.EXCEPTION.name()))
             {
                 throw new OperationFailedException("insert operation failed");
@@ -50,9 +52,10 @@ public class DeviceServiceImp implements DeviceServiceContract
     public HashMap<String, Device> getOneById(int deviceId)
     {
 
-        HashMap<String, Device> resultMap = deviceDaImp.getOneById(deviceId);
+        HashMap<String, Device> resultMap;
         try
         {
+            resultMap = deviceDaImp.getOneById(deviceId);
             if (resultMap.containsKey(AppResponseType.NOT_FOUND.name()))
             {
                 throw new NotFoundException();
@@ -73,9 +76,11 @@ public class DeviceServiceImp implements DeviceServiceContract
     @Override
     public List<Device> getAll()
     {
-        List<Device> resultMap = deviceDaImp.getAll();
+        List<Device> resultMap;
         try
         {
+            resultMap = deviceDaImp.getAll();
+
             if (resultMap == null || resultMap.isEmpty())
             {
                 throw new GetDataRetrievalException();
@@ -92,10 +97,11 @@ public class DeviceServiceImp implements DeviceServiceContract
     @Override
     public HashMap<String, Device> update(int deviceId, Device updatedDevice)
     {
-        HashMap<String, Device> resultMap = deviceDaImp.update(deviceId, updatedDevice);
+        HashMap<String, Device> resultMap;
 
         try
         {
+            resultMap = deviceDaImp.update(deviceId, updatedDevice);
             if (resultMap.containsKey(AppResponseType.DUPLICATE.name()))
             {
                 throw new DuplicationException();
@@ -120,10 +126,12 @@ public class DeviceServiceImp implements DeviceServiceContract
     @Override
     public HashMap<String, Device> updatePartial(int deviceId, Device partialDevice)
     {
-        HashMap<String, Device> resultMap = deviceDaImp.update(deviceId, partialDevice);
+        HashMap<String, Device> resultMap;
 
         try
         {
+            resultMap = deviceDaImp.updatePartial(deviceId, partialDevice);
+
             if (resultMap.containsKey(AppResponseType.DUPLICATE.name()))
             {
                 throw new DuplicationException();
@@ -145,10 +153,27 @@ public class DeviceServiceImp implements DeviceServiceContract
         return resultMap;
     }
 
+
     @Override
-    public boolean deleteDevice(int deviceId)
+    public HashMap<String, Device> deleteById(int deviceId)
     {
-        return false;
+        HashMap<String, Device> resultMap;
+
+        try
+        {
+            resultMap = deviceDaImp.deleteById(deviceId);
+            if (resultMap.containsKey(AppResponseType.EXCEPTION.name()))
+            {
+                throw new OperationFailedException("delete operation failed");
+            }
+
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+
+        return resultMap;
     }
 
     @Override

@@ -139,6 +139,7 @@ public class DeviceDaImp implements DeviceDaContract
         return result;
     }
 
+
     @Override
     @Transactional(transactionManager = "transactionManager", propagation = Propagation.REQUIRED)
     public HashMap<String, Device> updatePartial(int id, Device partialDevice)
@@ -182,11 +183,45 @@ public class DeviceDaImp implements DeviceDaContract
     }
 
 
+    @Transactional(transactionManager = "transactionManager", propagation = Propagation.REQUIRED)
     @Override
-    public boolean deleteDevice(int deviceId)
+    public HashMap<String, Device> deleteById(int id)
     {
-        return false;
+        HashMap<String, Device> result = new HashMap<>();
+
+        try
+        {
+            if (checkExistById(id))
+            {
+                entityManager.joinTransaction();
+                Device device = entityManager.find(Device.class, id);
+
+                if (device != null)
+                {
+                    device.setDeleted_at(new Timestamp(System.currentTimeMillis()));
+                    entityManager.merge(device);
+
+                    result.put(AppResponseType.SUCCESS.name(), null);
+                }
+                else
+                {
+                    result.put(AppResponseType.FAILED.name(), null);
+                }
+            }
+            else
+            {
+                result.put(AppResponseType.NOT_FOUND.name(), null);
+            }
+        }
+        catch (Exception e)
+        {
+            result.put(AppResponseType.EXCEPTION.name(), null);
+        }
+
+        return result;
     }
+
+
 
     @Override
     public List<Device> searchDevicesByBrand(String brand)
@@ -199,7 +234,7 @@ public class DeviceDaImp implements DeviceDaContract
     {
         try
         {
-            return Boolean.TRUE.equals(namedParameterJdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM devices WHERE id=:id)",
+            return Boolean.TRUE.equals(namedParameterJdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM devices WHERE id=:id AND deleted_at IS NULL)",
                     new MapSqlParameterSource("id", id), Boolean.class));
         }
         catch (Exception e)

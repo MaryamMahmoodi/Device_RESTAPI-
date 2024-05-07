@@ -23,7 +23,7 @@ public interface DeviceDaContract
     HashMap<String, Device> updatePartial(int deviceId, Device partialDevice);
 
 
-    boolean deleteDevice(int deviceId);
+    HashMap<String, Device> deleteById(int deviceId);
 
 
     List<Device> searchDevicesByBrand(String brand);
