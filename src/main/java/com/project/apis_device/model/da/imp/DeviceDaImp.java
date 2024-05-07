@@ -163,8 +163,6 @@ public class DeviceDaImp implements DeviceDaContract
                 }
 
                 existingDevice.setUpdated_at(new Timestamp(System.currentTimeMillis()));
-
-
                 entityManager.merge(existingDevice);
 
                 result.put(AppResponseType.SUCCESS.name(), existingDevice);

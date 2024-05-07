@@ -28,6 +28,7 @@ public interface DeviceDaContract
 
     List<Device> searchDevicesByBrand(String brand);
 
+
     HashMap<String, Device> restore(int id);
 
 
