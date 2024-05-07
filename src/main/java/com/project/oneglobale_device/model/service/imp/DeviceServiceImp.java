@@ -84,7 +84,6 @@ public class DeviceServiceImp implements DeviceServiceContract
             if (resultMap == null || resultMap.isEmpty())
             {
                 throw new GetDataRetrievalException();
-
             }
         }
         catch (Exception e)
@@ -179,6 +178,22 @@ public class DeviceServiceImp implements DeviceServiceContract
     @Override
     public List<Device> searchDevicesByBrand(String brand)
     {
-        return null;
+        List<Device> resultMap;
+        try
+        {
+            resultMap = deviceDaImp.searchDevicesByBrand(brand);
+
+            if (resultMap == null || resultMap.isEmpty())
+            {
+                throw new GetDataRetrievalException();
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+        return resultMap;
     }
+
+
 }

@@ -25,4 +25,5 @@ public interface DeviceServiceContract
     HashMap<String, Device> deleteById(int deviceId);
 
     List<Device> searchDevicesByBrand(String brand);
+
 }

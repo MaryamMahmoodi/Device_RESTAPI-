@@ -224,9 +224,18 @@ public class DeviceDaImp implements DeviceDaContract
 
 
     @Override
-    public List<Device> searchDevicesByBrand(String brand)
-    {
-        return null;
+    public List<Device> searchDevicesByBrand(String brand) {
+       try
+       {
+           return entityManager.createQuery("SELECT d FROM Device d WHERE d.brand = :brand AND d.deleted_at IS NULL", Device.class)
+                   .setParameter("brand", brand)
+                   .getResultList();
+       }
+       catch (Exception e)
+       {
+           throw e;
+       }
+
     }
 
 

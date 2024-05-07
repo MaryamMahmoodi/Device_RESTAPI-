@@ -44,6 +44,7 @@ public class DeviceController
     }
 
 
+
     @GetMapping(value = "/getOne/{id}")
     public ResponseEntity<?> getOne(@PathVariable("id") int id)
     {
@@ -64,68 +65,73 @@ public class DeviceController
     }
 
 
+
     @GetMapping(value = "/getAll")
-    public List<Device> getAll() throws GetDataRetrievalException
+    public ResponseEntity<List<Device>> getAll() throws GetDataRetrievalException
     {
-        try
+        List<Device> devices = deviceServiceImp.getAll();
+
+        if (!devices.isEmpty())
         {
-            return deviceServiceImp.getAll();
+            return ResponseEntity.ok(devices);
         }
-        catch (Exception e)
+        else
         {
-            return Collections.emptyList();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(devices);
         }
     }
+
 
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateDevice(@PathVariable int id, @RequestBody Device updatedDevice)
     {
 
-            HashMap<String, Device> resultMap = deviceServiceImp.update(id, updatedDevice);
+        HashMap<String, Device> resultMap = deviceServiceImp.update(id, updatedDevice);
 
-            if (resultMap.containsKey(AppResponseType.SUCCESS.name()))
-            {
-                return ResponseEntity.ok(resultMap.get(AppResponseType.SUCCESS.name()));
-            }
-            else if (resultMap.containsKey(AppResponseType.NOT_FOUND.name()))
-            {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Device not found");
-            }
-            else if (resultMap.containsKey(AppResponseType.DUPLICATE.name()))
-            {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Device already exists");
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update operation failed");
-            }
+        if (resultMap.containsKey(AppResponseType.SUCCESS.name()))
+        {
+            return ResponseEntity.ok(resultMap.get(AppResponseType.SUCCESS.name()));
+        }
+        else if (resultMap.containsKey(AppResponseType.NOT_FOUND.name()))
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Device not found");
+        }
+        else if (resultMap.containsKey(AppResponseType.DUPLICATE.name()))
+        {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device already exists");
+        }
+        else
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update operation failed");
+        }
     }
 
 
     @PutMapping("/updatePartial/{id}")
     public ResponseEntity<?> updatePartialDevice(@PathVariable int id, @RequestBody Device partialDevice)
     {
-            HashMap<String, Device> resultMap = deviceServiceImp.updatePartial(id, partialDevice);
+        HashMap<String, Device> resultMap = deviceServiceImp.updatePartial(id, partialDevice);
 
-            if (resultMap.containsKey(AppResponseType.SUCCESS.name()))
-            {
-                return ResponseEntity.ok(resultMap.get(AppResponseType.SUCCESS.name()));
-            }
-            else if (resultMap.containsKey(AppResponseType.NOT_FOUND.name()))
-            {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Device not found");
-            }
-            else if (resultMap.containsKey(AppResponseType.DUPLICATE.name()))
-            {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Device already exists");
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update operation failed");
-            }
-
+        if (resultMap.containsKey(AppResponseType.SUCCESS.name()))
+        {
+            return ResponseEntity.ok(resultMap.get(AppResponseType.SUCCESS.name()));
+        }
+        else if (resultMap.containsKey(AppResponseType.NOT_FOUND.name()))
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Device not found");
+        }
+        else if (resultMap.containsKey(AppResponseType.DUPLICATE.name()))
+        {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device already exists");
+        }
+        else
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Update operation failed");
+        }
     }
+
+
 
     @DeleteMapping(value = "/deleteById/{id}")
     public ResponseEntity<?> deleteById(@PathVariable("id") int id)
@@ -145,6 +151,22 @@ public class DeviceController
             return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @GetMapping("/searchByBrand/{brand}")
+    public ResponseEntity<?> searchDevicesByBrand(@PathVariable String brand)
+    {
+        List<Device> devices = deviceServiceImp.searchDevicesByBrand(brand);
+        if (!devices.isEmpty())
+        {
+            return ResponseEntity.ok(devices);
+        }
+        else
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No devices found for brand: " + brand);
+        }
+    }
+
 
 
 }
