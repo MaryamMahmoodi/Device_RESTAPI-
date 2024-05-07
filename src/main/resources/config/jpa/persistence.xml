@@ -7,7 +7,7 @@
 
     <persistence-unit name="yourPersistenceUnitName" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>com.project.oneglobale_device.model.entity.Device</class>
+        <class>com.project.apis_device.model.entity.Device</class>
 
         <properties>
 

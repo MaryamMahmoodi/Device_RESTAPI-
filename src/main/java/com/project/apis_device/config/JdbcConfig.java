@@ -1,9 +1,5 @@
-package com.project.oneglobale_device.config;
+package com.project.apis_device.config;
 
-import org.apache.commons.dbcp2.*;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.*;
@@ -32,27 +28,6 @@ public class JdbcConfig
     @Value("${spring.datasource.url}")
     private String url;
 
-//    @Bean
-//    @Qualifier("mysql")
-//    @Primary
-//    public DataSource jdbcMysqlDataSource()
-//    {
-//        ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, username, pass);
-//
-//        PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, null);
-//
-//        GenericObjectPoolConfig<PoolableConnection> poolConfig = new GenericObjectPoolConfig<>();
-//        poolConfig.setMaxTotal(50);
-//        poolConfig.setMaxIdle(10);
-//        poolConfig.setMinIdle(5);
-//
-//        GenericObjectPool<PoolableConnection> connectionPool = new GenericObjectPool<>(poolableConnectionFactory, poolConfig);
-//        poolableConnectionFactory.setPool(connectionPool);
-//
-//        DataSource dataSource = new PoolingDataSource<>(connectionPool);
-//
-//        return dataSource;
-//    }
 
     @Bean
     @Primary

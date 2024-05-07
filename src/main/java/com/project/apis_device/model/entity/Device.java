@@ -1,4 +1,4 @@
-package com.project.oneglobale_device.model.entity;
+package com.project.apis_device.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

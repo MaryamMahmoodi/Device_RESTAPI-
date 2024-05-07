@@ -1,6 +1,6 @@
-package com.project.oneglobale_device.model.service.contract;
+package com.project.apis_device.model.service.contract;
 
-import com.project.oneglobale_device.model.entity.Device;
+import com.project.apis_device.model.entity.Device;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,5 +25,7 @@ public interface DeviceServiceContract
     HashMap<String, Device> deleteById(int deviceId);
 
     List<Device> searchDevicesByBrand(String brand);
+
+    HashMap<String, Device> restore(int id);
 
 }

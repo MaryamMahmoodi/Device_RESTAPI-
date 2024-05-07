@@ -1,4 +1,4 @@
-package com.project.oneglobale_device.config;
+package com.project.apis_device.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

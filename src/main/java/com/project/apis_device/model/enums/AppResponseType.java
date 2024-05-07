@@ -1,4 +1,4 @@
-package com.project.oneglobale_device.model.enums;
+package com.project.apis_device.model.enums;
 
 public enum AppResponseType
 {

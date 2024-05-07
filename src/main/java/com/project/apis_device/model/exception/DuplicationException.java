@@ -1,4 +1,4 @@
-package com.project.oneglobale_device.model.exception;
+package com.project.apis_device.model.exception;
 
 public class DuplicationException extends RuntimeException
 {

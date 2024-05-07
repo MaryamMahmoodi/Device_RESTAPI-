@@ -1,9 +1,9 @@
-package com.project.oneglobale_device.model.da.imp;
+package com.project.apis_device.model.da.imp;
 
-import com.project.oneglobale_device.model.da.contract.DeviceDaContract;
-import com.project.oneglobale_device.model.entity.Device;
-import com.project.oneglobale_device.model.entity.DeviceMapper;
-import com.project.oneglobale_device.model.enums.AppResponseType;
+import com.project.apis_device.model.da.contract.DeviceDaContract;
+import com.project.apis_device.model.entity.Device;
+import com.project.apis_device.model.entity.DeviceMapper;
+import com.project.apis_device.model.enums.AppResponseType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,20 +187,27 @@ public class DeviceDaImp implements DeviceDaContract
     @Override
     public HashMap<String, Device> deleteById(int id)
     {
+        // Soft delete: Set the 'deleted_at' field instead of removing from the database
+        // This allows us to restore the device if needed
+
         HashMap<String, Device> result = new HashMap<>();
 
         try
         {
+            // Check if the device with the given ID exists
             if (checkExistById(id))
             {
+                // Begin a transaction
                 entityManager.joinTransaction();
                 Device device = entityManager.find(Device.class, id);
 
                 if (device != null)
                 {
+                    // Set the 'deleted_at' field to the current timestamp
                     device.setDeleted_at(new Timestamp(System.currentTimeMillis()));
                     entityManager.merge(device);
 
+                    // Soft delete successful
                     result.put(AppResponseType.SUCCESS.name(), null);
                 }
                 else
@@ -215,11 +222,13 @@ public class DeviceDaImp implements DeviceDaContract
         }
         catch (Exception e)
         {
+            // Exception occurred during soft delete operation
             result.put(AppResponseType.EXCEPTION.name(), null);
         }
 
         return result;
     }
+
 
 
 
@@ -239,10 +248,57 @@ public class DeviceDaImp implements DeviceDaContract
     }
 
 
+    @Transactional(transactionManager = "transactionManager", propagation = Propagation.REQUIRED)
+    @Override
+    public HashMap<String, Device> restore(int id)
+    {
+        // Restoration: Restore a soft-deleted device by setting 'deleted_at' to null
+
+        HashMap<String, Device> result = new HashMap<>();
+
+        // Check if the device with the given ID exists
+        if (checkExistById(id))
+        {
+            try
+            {
+                entityManager.joinTransaction();
+                Device device = entityManager.find(Device.class, id);
+
+                // Check if the device was previously soft-deleted
+                if (device.getDeleted_at() != null)
+                {
+                    // Restore the device by setting 'deleted_at' to null
+                    device.setDeleted_at(null);
+                    entityManager.merge(device);
+
+                    // Restoration successful
+                    result.put(AppResponseType.SUCCESS.name(), device);
+                }
+                else
+                {
+                    result.put(AppResponseType.FAILED.name(), null);
+                }
+            }
+            catch (Exception e)
+            {
+                result.put(AppResponseType.EXCEPTION.name(), null);
+            }
+        }
+        else
+        {
+            result.put(AppResponseType.NOT_FOUND.name(), null);
+        }
+        return result;
+    }
+
+
+    // Check if a device with the given ID exists and is not soft-deleted
+    // Returns true if the device exists and is not soft-deleted, false otherwise
     private boolean checkExistById(int id)
     {
         try
         {
+            // The query returns true if such a device exists, false otherwise
             return Boolean.TRUE.equals(namedParameterJdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM devices WHERE id=:id AND deleted_at IS NULL)",
                     new MapSqlParameterSource("id", id), Boolean.class));
         }
@@ -252,6 +308,9 @@ public class DeviceDaImp implements DeviceDaContract
         }
     }
 
+
+    // Check if a device with the given name exists (excluding the device with the given ID if provided)
+    // Returns true if a device with the given name exists, false otherwise
     private boolean checkExistByName(int id, String name)
     {
         try
@@ -260,6 +319,7 @@ public class DeviceDaImp implements DeviceDaContract
             {
                 if (checkExistById(id))
                 {
+                    // If the device with the given ID exists, check if another device with the same name exists (excluding the device with the given ID)
                     MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource().addValue("id", id)
                             .addValue("name", name);
                     boolean exists = !(namedParameterJdbcTemplate.query("select * from devices where id<>:id and name=:name",
@@ -279,6 +339,7 @@ public class DeviceDaImp implements DeviceDaContract
             }
             else
             {
+                // Check if any device with the given name exists (without considering the device ID)
                 boolean exists = !(namedParameterJdbcTemplate.query("select * from devices where name=:name",
                         new MapSqlParameterSource().addValue("name", name), new DeviceMapper()).isEmpty());
                 if (exists)

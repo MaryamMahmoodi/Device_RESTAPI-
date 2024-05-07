@@ -1,13 +1,13 @@
-package com.project.oneglobale_device.model.service.imp;
+package com.project.apis_device.model.service.imp;
 
-import com.project.oneglobale_device.model.enums.AppResponseType;
-import com.project.oneglobale_device.model.exception.DuplicationException;
-import com.project.oneglobale_device.model.exception.GetDataRetrievalException;
-import com.project.oneglobale_device.model.exception.OperationFailedException;
-import com.project.oneglobale_device.model.da.imp.DeviceDaImp;
-import com.project.oneglobale_device.model.entity.Device;
-import com.project.oneglobale_device.model.exception.NotFoundException;
-import com.project.oneglobale_device.model.service.contract.DeviceServiceContract;
+import com.project.apis_device.model.enums.AppResponseType;
+import com.project.apis_device.model.exception.DuplicationException;
+import com.project.apis_device.model.exception.GetDataRetrievalException;
+import com.project.apis_device.model.exception.OperationFailedException;
+import com.project.apis_device.model.da.imp.DeviceDaImp;
+import com.project.apis_device.model.entity.Device;
+import com.project.apis_device.model.exception.NotFoundException;
+import com.project.apis_device.model.service.contract.DeviceServiceContract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -195,5 +195,28 @@ public class DeviceServiceImp implements DeviceServiceContract
         return resultMap;
     }
 
+
+    @Override
+    public HashMap<String, Device> restore(int id)
+    {
+        HashMap<String, Device> resultMap = deviceDaImp.restore(id);
+        try
+        {
+            if (resultMap.containsKey(AppResponseType.FAILED.name()))
+            {
+                throw new OperationFailedException("Failed to restore the device");
+            }
+            else if (resultMap.containsKey(AppResponseType.NOT_FOUND.name()))
+            {
+                throw new NotFoundException();
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+
+        return resultMap;
+    }
 
 }
