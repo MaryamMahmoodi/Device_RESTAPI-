@@ -81,7 +81,6 @@ public class DeviceController
     }
 
 
-
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateDevice(@PathVariable int id, @RequestBody Device updatedDevice)
     {
@@ -166,6 +165,27 @@ public class DeviceController
         }
     }
 
+
+
+    @PostMapping(value = "/restore/{id}")
+    public ResponseEntity<?> restore(@PathVariable("id") int id)
+    {
+        HashMap<String, Device> result = deviceServiceImp.restore(id);
+
+        if (result.containsKey(AppResponseType.SUCCESS.name()))
+        {
+            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+        }
+        else if (result.containsKey(AppResponseType.NOT_FOUND.name()))
+        {
+            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        }
+        else
+        {
+            return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
 
 }

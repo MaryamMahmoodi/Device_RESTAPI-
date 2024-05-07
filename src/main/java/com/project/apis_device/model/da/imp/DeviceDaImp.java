@@ -253,12 +253,8 @@ public class DeviceDaImp implements DeviceDaContract
     public HashMap<String, Device> restore(int id)
     {
         // Restoration: Restore a soft-deleted device by setting 'deleted_at' to null
-
         HashMap<String, Device> result = new HashMap<>();
 
-        // Check if the device with the given ID exists
-        if (checkExistById(id))
-        {
             try
             {
                 entityManager.joinTransaction();
@@ -283,11 +279,7 @@ public class DeviceDaImp implements DeviceDaContract
             {
                 result.put(AppResponseType.EXCEPTION.name(), null);
             }
-        }
-        else
-        {
-            result.put(AppResponseType.NOT_FOUND.name(), null);
-        }
+
         return result;
     }
 
